@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Neighborhood Map</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+  </head>
+
+  <body>
+    <div class='col-1'>
+      <div class='options-box'>
+        <h3>Ann Arbor Locations</h3>
+        <div id='list' class='hidden'>
+          <!-- Search location -->
+          <hr>
+          <ul id='listings'></ul>
+        </div>
+      </div>
+    </div>
+    <div class='col-2'>
+      <img id='menu' src='img/menu-icon.png' alt='==' onclick='hideListings()'>
+      <div id='map'></div>
+    </div>
+    <script src='js/locations.js'></script>
+    <script src='js/mapscript.js'></script>
+
+    <!-- Maps_API_Udacity_Course = 'AIzaSyCfgr4-Cyfx3NvKzE5LIqnMruRHEgHcitQ' -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?v=3&key=
+AIzaSyCfgr4-Cyfx3NvKzE5LIqnMruRHEgHcitQ&callback=initMap"></script>
+  </body>
+</html>
