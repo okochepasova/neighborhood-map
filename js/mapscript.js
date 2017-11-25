@@ -5,19 +5,24 @@ var map;
 
 
 function initMap() {
-  var coord = {lat: 42.279594, lng: -83.732124};
   var listings = document.getElementById('listings');
+  var locations = getLocations();
+
+  // Show/Hide listings
+  if (this.screen.width >= 480) {
+    hideListings();
+  }
 
   // Constructor created a new map - only center and zoom are required.
   map = new google.maps.Map(document.getElementById('map'), {
-    center: coord,
+    center: {lat: 42.270000, lng: -83.735000},
     zoom: 13,
     mapTypeControl: false
   });
 
-  var locations = getLocations();
-
   largeInfowindow = new google.maps.InfoWindow();
+  // red - 0, green - 1, blue - 2, black - 3
+  var greenIcon = makeMarkerIcon(1);
   var blackIcon = makeMarkerIcon(3);
 
   // The following group uses the location array to create an array of markers
@@ -35,7 +40,7 @@ function initMap() {
       position: position,
       map: map,
       title: title,
-      icon: makeMarkerIcon(1),
+      icon: greenIcon,
       animation: google.maps.Animation.DROP,
       id: i
     });
@@ -46,7 +51,11 @@ function initMap() {
       this.setIcon(blackIcon);
     });
     marker.addListener('mouseout', function() {
-      this.setIcon(makeMarkerIcon(1));
+      if (this == largeInfowindow.marker) {
+        this.setIcon(makeMarkerIcon(0));
+      } else {
+        this.setIcon(greenIcon);
+      }
     });
 
     // Push the marker to our array of markers.
@@ -56,6 +65,7 @@ function initMap() {
       populateInfoWindow(this, largeInfowindow);
     });
   }
+  fitBounds()
 }
 
 
@@ -72,14 +82,38 @@ function makeMarkerIcon(num) {
   return markerImage;
 }
 
+function fitBounds() {
+  var bounds = new google.maps.LatLngBounds();
+  for (var i = 0; i < markers.length; i++) {
+    // Extend the boundaries of the map for each marker.
+    bounds.extend(markers[i].position);
+  }
+  map.fitBounds(bounds);
+}
 
 function hideListings() {
+  var col = document.getElementsByClassName('col-1')[0];
   var list = document.getElementById('list');
   if (list.className) {
     list.className = '';
+    col.className = 'col-1 shown';
   } else {
     list.className = 'hidden';
+    col.className = 'col-1';
   }
+}
+
+
+function unsetIcon(marker) {
+  var item = document.getElementById('li-'+marker.id);
+  item.className = 'text';
+  marker.setIcon(makeMarkerIcon(1));
+}
+
+function setIcon(marker) {
+  var item = document.getElementById('li-'+marker.id);
+  item.className = 'text highlighted';
+  marker.setIcon(makeMarkerIcon(0));
 }
 
 
@@ -97,13 +131,11 @@ function populateInfoWindow(marker, infowindow) {
     return;
   } else if (infowindow.marker) {
     // Unhighlight the previous listing
-    var item = document.getElementById('li-'+infowindow.marker.id);
-    item.className = 'text';
+    unsetIcon(infowindow.marker);
   }
 
   // Highlight the current listing
-  var item = document.getElementById('li-'+marker.id);
-  item.className = 'text highlighted';
+  setIcon(marker);
 
   infowindow.marker = marker;
   var title = '<div>' + marker.title + '</div><br>';
@@ -111,8 +143,7 @@ function populateInfoWindow(marker, infowindow) {
   // Make sure the marker is cleared if the infowindow is closed.
   infowindow.addListener('closeclick', function() {
     // Unhighlight the listing
-    var item = document.getElementById('li-'+infowindow.marker.id);
-    item.className = 'text';
+    unsetIcon(infowindow.marker);
     infowindow.marker = null;
   });
 
