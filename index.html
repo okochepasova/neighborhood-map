@@ -16,7 +16,10 @@
         <div id='list' class='hidden'>
           <!-- Search location -->
           <hr>
-          <ul id='listings'></ul>
+          <ul id='listings' data-bind="foreach: currLocations">
+            <li data-bind="text: title, click: highlight,
+css: { highlighted : selected() }"></li>
+          </ul>
         </div>
       </div>
     </div>
@@ -26,12 +29,12 @@
     </div>
 
     <!-- SCRIPTS -->
-    <script type='text/javascript' src='js/lib/knockout-3.4.2.js'></script>
-    <script src='js/locations.js'></script>
-    <script src='js/mapscript.js'></script>
-
     <!-- Maps_API = 'AIzaSyCfgr4-Cyfx3NvKzE5LIqnMruRHEgHcitQ' -->
     <script async defer src="https://maps.googleapis.com/maps/api/js?v=3&key=
 AIzaSyCfgr4-Cyfx3NvKzE5LIqnMruRHEgHcitQ&callback=initMap"></script>
+
+    <script type='text/javascript' src='js/lib/knockout-3.4.2.js'></script>
+    <script src='js/mapscript.js'></script>
+    <script src='js/locations.js'></script>
   </body>
 </html>

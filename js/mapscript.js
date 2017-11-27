@@ -5,8 +5,7 @@ var map;
 
 
 function initMap() {
-  var listings = document.getElementById('listings');
-  var locations = getLocations();
+  var locations = allLocations;
 
   // Show/Hide listings
   if (this.screen.width >= 480) {
@@ -29,12 +28,9 @@ function initMap() {
   // on initialize.
   for (var i=0; i < locations.length; i++) {
     // Get position from the location array.
-    var position = locations[i].location;
+    var position = locations[i].position;
     var title = locations[i].title;
 
-    // Add a listing name to the list.
-    listings.innerHTML += '<li id="li-' + i + '" class="text"' +
-      ' onclick="openWindow(' + i + ')">' + title + '</li>';
     // Create a marker per location, and put into markers array.
     var marker = new google.maps.Marker({
       position: position,
