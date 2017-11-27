@@ -101,13 +101,13 @@ function hideListings() {
 
 
 function unsetIcon(marker) {
-  var item = document.getElementById('li-'+marker.id);
+  var item = document.getElementById(marker.id);
   item.className = 'text';
   marker.setIcon(makeMarkerIcon(1));
 }
 
 function setIcon(marker) {
-  var item = document.getElementById('li-'+marker.id);
+  var item = document.getElementById(marker.id);
   item.className = 'text highlighted';
   marker.setIcon(makeMarkerIcon(0));
 }
