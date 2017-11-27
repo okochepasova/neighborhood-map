@@ -17,8 +17,8 @@
           <!-- Search location -->
           <hr>
           <ul id='listings' data-bind="foreach: currLocations">
-            <li class='text' data-bind="text: title, click: highlight,
-css: { highlighted : selected() }, attr: { id: $index }"></li>
+            <li class='text' data-bind="text: title, click: openWindow,
+attr: { id: id }"></li>
           </ul>
         </div>
       </div>

@@ -31,24 +31,20 @@ var allLocations = [
     position: {lat: 42.263509, lng: -83.665652}}
 ];
 
-function Listing(title) {
+function Listing(title, id) {
   self = this;
   self.title = title;
+  self.id = id;
 
-  self.selected = ko.observable(false);
-  self.highlight = function() {
-    if (this.selected()) {
-      this.selected(false);
-    } else {
-      this.selected(true);
-    }
-  };
+  self.openWindow = function() {
+    populateInfoWindow(markers[this.id], largeInfowindow);
+  }
 }
 
 function LocationsViewModel() {
   self = this;
 
-  // Non-editable locations
+  // Non-editable data
 
   // Editable data
   self.currLocations = ko.observableArray([]);
@@ -93,7 +89,7 @@ function LocationsViewModel() {
 
   for (var i = 0; i < allLocations.length; i++) {
     var item = allLocations[i];
-    this.currLocations.push( new Listing(item.title) );
+    this.currLocations.push( new Listing(item.title, i) );
     //this.currMarkers.push( this.makeMarker(item.title, item.position, i) );
   }
 }
