@@ -6,6 +6,7 @@ function Listing(title, location, id) {
   self.location = location;
   self.id = id;
 
+  self.toHide = ko.observable(false);
   self.openWindow = function() {
     populateInfoWindow(markers[this.id], largeInfowindow);
   }
@@ -60,15 +61,6 @@ function LocationsViewModel() {
   self.currLocations = ko.observableArray([]);
 
   // Operations
-  self.setLocations = function(array) {
-    var temp = [];
-    for (var i = 0; i < array.length; i++) {
-      var item = array[i];
-      temp.push( new Listing(item.title, item.position, i) );
-    }
-    this.currLocations(temp);
-  }
-
   for (var i = 0; i < this.allLocations.length; i++) {
     var item = this.allLocations[i];
     this.currLocations.push( new Listing(item.title, item.position, i) );

@@ -21,8 +21,9 @@ function initMap() {
 
   largeInfowindow = new google.maps.InfoWindow();
   // red - 0, green - 1, blue - 2, black - 3
-  var greenIcon = makeMarkerIcon(1);
-  var blackIcon = makeMarkerIcon(3);
+  var selectedIcon = makeMarkerIcon(0);
+  var defaultIcon = makeMarkerIcon(1);
+  var hoverIcon = makeMarkerIcon(3);
 
   // The following group uses the location array to create an array of markers
   // on initialize.
@@ -36,7 +37,7 @@ function initMap() {
       position: position,
       map: map,
       title: title,
-      icon: greenIcon,
+      icon: defaultIcon,
       animation: google.maps.Animation.DROP,
       id: i
     });
@@ -44,13 +45,13 @@ function initMap() {
     // Two event listeners - one for mouseover, one for mouseout,
     // to change the colors back and forth.
     marker.addListener('mouseover', function() {
-      this.setIcon(blackIcon);
+      this.setIcon(hoverIcon);
     });
     marker.addListener('mouseout', function() {
       if (this == largeInfowindow.marker) {
-        this.setIcon(makeMarkerIcon(0));
+        this.setIcon(selectedIcon);
       } else {
-        this.setIcon(greenIcon);
+        this.setIcon(defaultIcon);
       }
     });
 
@@ -66,6 +67,14 @@ function initMap() {
   // Add the search function.
   var searchBtn = document.getElementById('search-btn');
   searchBtn.addEventListener('click', searchLocations);
+
+  searchBtn = document.getElementById('search-input');
+  searchBtn.addEventListener('keypress', function (e) {
+    var key = e.which || e.keyCode;
+    if (key === 13) { // 13 is enter
+      searchLocations();
+    }
+  });
 }
 
 
@@ -82,11 +91,11 @@ function makeMarkerIcon(num) {
   return markerImage;
 }
 
-function fitBounds() {
+function fitBounds(array = markers) {
   var bounds = new google.maps.LatLngBounds();
-  for (var i = 0; i < markers.length; i++) {
+  for (var i = 0; i < array.length; i++) {
     // Extend the boundaries of the map for each marker.
-    bounds.extend(markers[i].position);
+    bounds.extend(array[i].position);
   }
   map.fitBounds(bounds);
 }
@@ -178,24 +187,26 @@ function populateInfoWindow(marker, infowindow) {
   infowindow.open(map, marker);
 }
 
+// This function filters through the available listings based on an entered
+// frase, and hides not needed markers and listings. In the frase is empty,
+// all markers and listings are shown.
 function searchLocations() {
   var input = document.getElementById('search-input').value.toLowerCase();
-  if (!input) { return; }
-
   var locations = LVM.allLocations;
   var temp_array = [];
 
   // Body
   for (var i = 0; i < locations.length; i++) {
-    var item = locations[i];
-    if (item.title.toLowerCase().includes(input)) {
-      temp_array.push(item);
+    var item = LVM.currLocations()[i];
+    if (locations[i].title.toLowerCase().includes(input)) {
+      item.toHide(false);
       markers[i].setMap(map);
     } else {
+      item.toHide(true);
       markers[i].setMap(null);
     }
   }
 
   // Closing
-  LVM.setLocations(temp_array);
+  fitBounds();
 }
