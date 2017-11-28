@@ -5,7 +5,7 @@ var map;
 
 
 function initMap() {
-  var locations = allLocations;
+  var locations = LVM.currLocations();
 
   // Show/Hide listings
   if (this.screen.width >= 480) {
@@ -28,7 +28,7 @@ function initMap() {
   // on initialize.
   for (var i=0; i < locations.length; i++) {
     // Get position from the location array.
-    var position = locations[i].position;
+    var position = locations[i].location;
     var title = locations[i].title;
 
     // Create a marker per location, and put into markers array.
@@ -62,6 +62,10 @@ function initMap() {
     });
   }
   fitBounds()
+
+  // Add the search function.
+  var searchBtn = document.getElementById('search-btn');
+  searchBtn.addEventListener('click', searchLocations);
 }
 
 
@@ -172,4 +176,26 @@ function populateInfoWindow(marker, infowindow) {
     marker.position, radius, getStreetView);
   // Open the infowindow on the correct marker.
   infowindow.open(map, marker);
+}
+
+function searchLocations() {
+  var input = document.getElementById('search-input').value.toLowerCase();
+  if (!input) { return; }
+
+  var locations = LVM.allLocations;
+  var temp_array = [];
+
+  // Body
+  for (var i = 0; i < locations.length; i++) {
+    var item = locations[i];
+    if (item.title.toLowerCase().includes(input)) {
+      temp_array.push(item);
+      markers[i].setMap(map);
+    } else {
+      markers[i].setMap(null);
+    }
+  }
+
+  // Closing
+  LVM.setLocations(temp_array);
 }

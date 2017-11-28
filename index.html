@@ -15,10 +15,12 @@
         <h3>Ann Arbor Locations</h3>
         <div id='list' class='hidden'>
           <!-- Search location -->
+          <input id="search-input" type="text">
+          <input id="search-btn" type="button" value="Search">
           <hr>
           <ul id='listings' data-bind="foreach: currLocations">
             <li class='text' data-bind="text: title, click: openWindow,
-attr: { id: id }"></li>
+attr: { id: id }">No Results</li>
           </ul>
         </div>
       </div>
