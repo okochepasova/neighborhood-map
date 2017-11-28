@@ -9,7 +9,7 @@ function initMap() {
 
   // Show/Hide listings
   if (this.screen.width >= 480) {
-    hideListings();
+    LVM.hideListings(false);
   }
 
   // Constructor created a new map - only center and zoom are required.
@@ -101,29 +101,23 @@ function fitBounds(array = markers) {
 }
 
 function hideListings() {
-  var col = document.getElementsByClassName('col-1')[0];
-  var list = document.getElementById('list');
-  if (list.className) {
-    list.className = '';
-    col.className = 'col-1 shown';
+  if (LVM.hideListings()) {
+    LVM.hideListings(false);
   } else {
-    list.className = 'hidden';
-    col.className = 'col-1';
+    LVM.hideListings(true);
   }
 }
 
 
 function unsetIcon(marker) {
   if(!marker) {return;}
-  var item = document.getElementById(marker.id);
-  item.className = 'text';
+  LVM.currLocations()[marker.id].toShine(false);
   marker.setIcon(makeMarkerIcon(1));
 }
 
 function setIcon(marker) {
   if(!marker) {return;}
-  var item = document.getElementById(marker.id);
-  item.className = 'text highlighted';
+  LVM.currLocations()[marker.id].toShine(true);
   marker.setIcon(makeMarkerIcon(0));
 }
 

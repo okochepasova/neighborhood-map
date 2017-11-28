@@ -7,9 +7,10 @@ function Listing(title, location, id) {
   self.id = id;
 
   self.toHide = ko.observable(false);
+  self.toShine = ko.observable(false);
   self.openWindow = function() {
     populateInfoWindow(markers[this.id], largeInfowindow);
-  }
+  };
 }
 
 //    {title: '',
@@ -59,6 +60,7 @@ function LocationsViewModel() {
 
   // Editable data
   self.currLocations = ko.observableArray([]);
+  self.hideListings = ko.observable(true);
 
   // Operations
   for (var i = 0; i < this.allLocations.length; i++) {
