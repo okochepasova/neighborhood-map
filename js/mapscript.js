@@ -65,15 +65,14 @@ function initMap() {
   fitBounds()
 
   // Add the search function.
-  var searchBtn = document.getElementById('search-btn');
-  searchBtn.addEventListener('click', searchLocations);
-
   searchBtn = document.getElementById('search-input');
-  searchBtn.addEventListener('keypress', function (e) {
+  searchBtn.addEventListener('keyup', function (e) {
+    /* DEBUGING
     var key = e.which || e.keyCode;
-    if (key === 13) { // 13 is enter
-      searchLocations();
-    }
+    console.log("koInput= '"+LVM.searchInput()+
+      "', key= '"+String.fromCharCode(key)+
+      "', this= '"+this.value+"'");*/
+    searchLocations(this.value);
   });
 }
 
@@ -119,6 +118,11 @@ function setIcon(marker) {
   if(!marker) {return;}
   LVM.currLocations()[marker.id].toShine(true);
   marker.setIcon(makeMarkerIcon(0));
+
+  // Hides the menu when a listing is selected
+  if (this.screen.width < 480) {
+    LVM.hideListings(true);
+  }
 }
 
 
@@ -138,7 +142,7 @@ function populateInfoWindow(marker, infowindow) {
   setIcon(marker);
 
   infowindow.marker = marker;
-  var title = '<div>' + marker.title + '</div><br>';
+  var title = '<div class="text">' + marker.title + '</div><br>';
 
   // Make sure the marker is cleared if the infowindow is closed.
   infowindow.addListener('closeclick', function() {
@@ -155,21 +159,16 @@ function populateInfoWindow(marker, infowindow) {
   // panorama from that and set the options
   function getStreetView(data, status) {
     if (status == google.maps.StreetViewStatus.OK) {
-      var nearStreetViewLocation = data.location.latLng;
-      var heading = google.maps.geometry.spherical.computeHeading(
-        nearStreetViewLocation, marker.position);
-      infowindow.setContent(title + '<div id="pano"></div>');
-      var panoramaOptions = {
-        position: nearStreetViewLocation,
-        pov: {
-          heading: heading,
-          pitch: 30
-        }
-      };
-      var panorama = new google.maps.StreetViewPanorama(
-        document.getElementById('pano'), panoramaOptions);
+      var loc = marker.position;
+      var imgUrl = 'http://maps.googleapis.com/maps/api/streetview'+
+        '?size=600x400&location='+loc.lat()+','+loc.lng();
+      var panorama = '<img class="image" alt="'+marker.title+'" src="'+
+        imgUrl+'" />';
+
+      infowindow.setContent(title + panorama);
     } else {
-      infowindow.setContent(title + '<div>No Street View Found</div>');
+      infowindow.setContent(title +
+        '<div class="text">No Image Found</div>');
     }
   }
 
@@ -184,14 +183,16 @@ function populateInfoWindow(marker, infowindow) {
 // This function filters through the available listings based on an entered
 // frase, and hides not needed markers and listings. In the frase is empty,
 // all markers and listings are shown.
-function searchLocations() {
-  var input = document.getElementById('search-input').value.toLowerCase();
-  var locations = LVM.allLocations;
-  var temp_array = [];
+function searchLocations(str) {
+  var input = str.toLowerCase();
+  var locations = LVM.getLocations();
+  console.log('input: "' + input + '"');
 
   // Body
   for (var i = 0; i < locations.length; i++) {
     var item = LVM.currLocations()[i];
+    // I chose to use `setMap()` instead of `setVisible()` because the
+    // infowindow doesn't automatically hide in `setVisible()`.
     if (locations[i].title.toLowerCase().includes(input)) {
       item.toHide(false);
       markers[i].setMap(map);
@@ -203,4 +204,11 @@ function searchLocations() {
 
   // Closing
   fitBounds();
+}
+
+
+// When the map load fails
+function errorMap() {
+  map = document.getElementById('map');
+  map.innerHTML = '<img alt="A globe." src="img/Globe.png" >';
 }

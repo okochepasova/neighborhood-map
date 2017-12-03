@@ -41,6 +41,7 @@ li:active,
 #list {
   background: #000;
 }
+#search-input { width: 100% }
 
 
 /* ========== CLASSES ========== */
@@ -60,6 +61,7 @@ li:active,
   position: absolute;
 }
 .text { font-size: 16px; }
+.image { width: 95%; }
 .options-box {
   /*border: 1px solid #999;
   border-radius: 3px;*/
@@ -85,4 +87,5 @@ li:active,
   .col-1 { right: calc(100% - 362px); }
   .col-2 { left: 362px; }
   .options-box { width: 340px; }
+  .image { width: 20em;height: 15em; }
 }

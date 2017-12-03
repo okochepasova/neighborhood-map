@@ -10,14 +10,14 @@
   </head>
 
   <body>
-    <div class='col-1' data-bind="css: { shown: !hideListings }">
+    <div class='col-1' data-bind="css: { shown: !hideListings() }">
       <div class='options-box'>
         <h3>Ann Arbor Locations</h3>
         <hr>
         <div id='list' data-bind="css: { hidden: hideListings }">
           <!-- Search location -->
-          <input id="search-input" type="text">
-          <input id="search-btn" type="button" value="Search">
+          <input type="text" id="search-input" placeholder='Type to Search'
+            class='text'>
           <!-- Listings -->
           <ul id='listings' data-bind="foreach: currLocations">
             <li class='text' data-bind="text: title, click: openWindow,
@@ -34,12 +34,13 @@ attr: { id: id }, css: { hidden: toHide, highlighted: toShine }">No Results</li>
     </div>
 
     <!-- SCRIPTS -->
-    <!-- Maps_API = 'AIzaSyCfgr4-Cyfx3NvKzE5LIqnMruRHEgHcitQ' -->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?v=3&key=
-AIzaSyCfgr4-Cyfx3NvKzE5LIqnMruRHEgHcitQ&callback=initMap"></script>
-
     <script type='text/javascript' src='js/lib/knockout-3.4.2.js'></script>
     <script src='js/mapscript.js'></script>
     <script src='js/locations.js'></script>
+
+    <!-- Maps_API = 'AIzaSyCfgr4-Cyfx3NvKzE5LIqnMruRHEgHcitQ' -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?v=3&key=
+AIzaSyCfgr4-Cyfx3NvKzE5LIqnMruRHEgHcitQ&callback=initMap" onerror="errorMap()"
+      ></script>
   </body>
 </html>
