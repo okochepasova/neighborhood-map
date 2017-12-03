@@ -163,6 +163,7 @@ function LocationsViewModel() {
   // Editable data
   self.currLocations = ko.observableArray([]);
   self.hideListings = ko.observable(true);
+  self.searchInput = ko.observable('');
 
   // Operations
   self.getLocations = function() {

@@ -17,7 +17,7 @@
         <div id='list' data-bind="css: { hidden: hideListings }">
           <!-- Search location -->
           <input type="text" id="search-input" placeholder='Type to Search'
-            class='text'>
+            class='text' onkeyup='searchLocations(this.value)'>
           <!-- Listings -->
           <ul id='listings' data-bind="foreach: currLocations">
             <li class='text' data-bind="text: title, click: openWindow,

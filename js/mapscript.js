@@ -63,17 +63,6 @@ function initMap() {
     });
   }
   fitBounds()
-
-  // Add the search function.
-  searchBtn = document.getElementById('search-input');
-  searchBtn.addEventListener('keyup', function (e) {
-    /* DEBUGING
-    var key = e.which || e.keyCode;
-    console.log("koInput= '"+LVM.searchInput()+
-      "', key= '"+String.fromCharCode(key)+
-      "', this= '"+this.value+"'");*/
-    searchLocations(this.value);
-  });
 }
 
 
@@ -188,6 +177,9 @@ function searchLocations(str) {
   var locations = LVM.getLocations();
   console.log('input: "' + input + '"');
 
+  // Do nothing if input has not changed.
+  if(LVM.searchInput() == str) { return; }
+
   // Body
   for (var i = 0; i < locations.length; i++) {
     var item = LVM.currLocations()[i];
@@ -204,6 +196,7 @@ function searchLocations(str) {
 
   // Closing
   fitBounds();
+  LVM.searchInput(str);
 }
 
 
