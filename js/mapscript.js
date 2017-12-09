@@ -63,7 +63,7 @@ function initMap() {
     });
   }
   fitBounds()
-}
+};
 
 
 // This function takes in a COLOR, and then creates a new marker icon of that
@@ -77,7 +77,7 @@ function makeMarkerIcon(num) {
     new google.maps.Point(10, 34),
     new google.maps.Size(21,34));
   return markerImage;
-}
+};
 
 function fitBounds(array = markers) {
   var bounds = new google.maps.LatLngBounds();
@@ -86,7 +86,7 @@ function fitBounds(array = markers) {
     bounds.extend(array[i].position);
   }
   map.fitBounds(bounds);
-}
+};
 
 function hideListings() {
   if (LVM.hideListings()) {
@@ -94,14 +94,14 @@ function hideListings() {
   } else {
     LVM.hideListings(true);
   }
-}
+};
 
 
 function unsetIcon(marker) {
   if(!marker) {return;}
   LVM.currLocations()[marker.id].toShine(false);
   marker.setIcon(makeMarkerIcon(1));
-}
+};
 
 function setIcon(marker) {
   if(!marker) {return;}
@@ -112,7 +112,7 @@ function setIcon(marker) {
   if (this.screen.width < 480) {
     LVM.hideListings(true);
   }
-}
+};
 
 
 // This function populates the infowindow when the marker is clicked. We'll
@@ -126,12 +126,15 @@ function populateInfoWindow(marker, infowindow) {
     // Unhighlight the previous listing
     unsetIcon(infowindow.marker);
   }
+  infowindow.addContent = function(stuff) {
+    infowindow.setContent(infowindow.getContent() + stuff);
+  }
 
   // Highlight the current listing
   setIcon(marker);
 
   infowindow.marker = marker;
-  var title = '<div class="text">' + marker.title + '</div><br>';
+  var title = '<h2>' + marker.title + '</h2><br>';
 
   // Make sure the marker is cleared if the infowindow is closed.
   infowindow.addListener('closeclick', function() {
@@ -152,14 +155,19 @@ function populateInfoWindow(marker, infowindow) {
       var imgUrl = 'http://maps.googleapis.com/maps/api/streetview'+
         '?size=600x400&location='+loc.lat()+','+loc.lng();
       var panorama = '<img class="image" alt="'+marker.title+'" src="'+
-        imgUrl+'" />';
+        imgUrl+'" /><br>';
 
+      /* ---------- NOTE ----------
+       * I reused existing code to show an streetview image instead of a
+       * panorama
+       * ---------- NOTE ---------- */
       infowindow.setContent(title + panorama);
     } else {
       infowindow.setContent(title +
-        '<div class="text">No Image Found</div>');
+        '<div class="text">No Image Found</div><br>');
     }
-  }
+  };
+  wikiArtcl(marker.title, infowindow);
 
   // Use streetview service to get the closest streetview image within
   // 50 meters of the markers pposition.
@@ -167,7 +175,7 @@ function populateInfoWindow(marker, infowindow) {
     marker.position, radius, getStreetView);
   // Open the infowindow on the correct marker.
   infowindow.open(map, marker);
-}
+};
 
 // This function filters through the available listings based on an entered
 // frase, and hides not needed markers and listings. In the frase is empty,
@@ -197,11 +205,58 @@ function searchLocations(str) {
   // Closing
   fitBounds();
   LVM.searchInput(str);
-}
+};
 
 
 // When the map load fails
 function errorMap() {
   map = document.getElementById('map');
   map.innerHTML = '<img alt="A globe." src="img/Globe.png" >';
-}
+};
+
+// Get Request for Wikipedia Articles
+function wikiArtcl(cityStr, infowindow) {
+  var url = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' +
+    cityStr + '&format=json&callback=WikiCallback';
+
+  var wikiRequestTimeout = setTimeout(function(){
+    infowindow.addContent('<h2>failed to get wikipedia resources</h2>');
+    console.log('fail: wikiStr');
+  }, 8000);
+
+  // Process the Responce
+  $.ajax({
+    url: url,
+    dataType: 'jsonp',
+    jsonp: 'callback',
+    success: function( response ) {
+      if(response[1].length <= 0) {
+        infowindow.addContent('<div class="text">No Wikipedia Articles.' +
+          '</div><br>');
+        console.log('no: wikiStr');
+        clearTimeout(wikiRequestTimeout);
+        return;
+      }
+
+      // Variables
+      var a = response[1][0];
+      a = a.replace(new RegExp(' ', 'g'), '_');
+      var web_url = 'http://en.wikipedia.org/wiki/' + a;
+      console.log(response[1]);
+
+      // Body
+      infowindow.addContent('<br><h2>Wikipedia Articles:</h2>');
+      infowindow.addContent('<a href="' + web_url + '" class="text">' + a +
+        '</a><br>');
+
+      // Closing
+      console.log('success: wikiStr');
+      clearTimeout(wikiRequestTimeout);
+    },
+    error: function( response ) {
+      infowindow.addContent('<div class="text">Could not Find any Wikipedia' +
+        ' Articles.</div><br>');
+      console.log('error: wikiStr');
+    }
+  });
+};
