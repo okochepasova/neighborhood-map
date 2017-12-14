@@ -62,6 +62,7 @@ function initMap() {
       populateInfoWindow(this, largeInfowindow);
     });
   }
+
   fitBounds()
 };
 
@@ -183,27 +184,30 @@ function populateInfoWindow(marker, infowindow) {
 function searchLocations(str) {
   var input = str.toLowerCase();
   var locations = LVM.getLocations();
+  var temp_array = []
   console.log('input: "' + input + '"');
 
   // Do nothing if input has not changed.
-  if(LVM.searchInput() == str) { return; }
+  if (LVM.searchInput() == str) { return; }
 
   // Body
   for (var i = 0; i < locations.length; i++) {
     var item = LVM.currLocations()[i];
+    var marker = markers[i];
     // I chose to use `setMap()` instead of `setVisible()` because the
     // infowindow doesn't automatically hide in `setVisible()`.
     if (locations[i].title.toLowerCase().includes(input)) {
       item.toHide(false);
-      markers[i].setMap(map);
+      marker.setMap(map);
+      temp_array.push(marker);
     } else {
       item.toHide(true);
-      markers[i].setMap(null);
+      marker.setMap(null);
     }
   }
 
   // Closing
-  fitBounds();
+  if (temp_array.length > 0) { fitBounds(temp_array); }
   LVM.searchInput(str);
 };
 
@@ -211,18 +215,15 @@ function searchLocations(str) {
 // When the map load fails
 function errorMap() {
   map = document.getElementById('map');
-  map.innerHTML = '<img alt="A globe." src="img/Globe.png" >';
+  map.innerHTML = '<img alt="A globe." src="img/Globe.png" >\n' +
+    '<p>There was an Error with Google Maps.</p>';
+  console.log('There was an Error with Google Maps.');
 };
 
 // Get Request for Wikipedia Articles
 function wikiArtcl(cityStr, infowindow) {
   var url = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' +
     cityStr + '&format=json&callback=WikiCallback';
-
-  var wikiRequestTimeout = setTimeout(function(){
-    infowindow.addContent('<h2>failed to get wikipedia resources</h2>');
-    console.log('fail: wikiStr');
-  }, 8000);
 
   // Process the Responce
   $.ajax({
@@ -234,7 +235,6 @@ function wikiArtcl(cityStr, infowindow) {
         infowindow.addContent('<div class="text">No Wikipedia Articles.' +
           '</div><br>');
         console.log('no: wikiStr');
-        clearTimeout(wikiRequestTimeout);
         return;
       }
 
@@ -251,7 +251,6 @@ function wikiArtcl(cityStr, infowindow) {
 
       // Closing
       console.log('success: wikiStr');
-      clearTimeout(wikiRequestTimeout);
     },
     error: function( response ) {
       infowindow.addContent('<div class="text">Could not Find any Wikipedia' +
