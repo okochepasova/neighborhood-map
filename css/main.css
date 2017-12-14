@@ -79,11 +79,9 @@ li:active,
   /*#list { display: block; }*/
   .col-1 { right: 60%; }
   .col-2 { left: 40%; }
-  .options-box { width: calc(100% - 20px); }
 }
 @media screen and (min-width: 801px) {
   .col-1 { right: calc(100% - 362px); }
   .col-2 { left: 362px; }
-  .options-box { width: 340px; }
   .image { width: 20em;height: 15em; }
 }

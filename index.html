@@ -6,35 +6,33 @@
     <title>Neighborhood Map</title>
 
     <!-- CSS -->
-    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" href="css/main.css">
   </head>
 
   <body>
-    <div class='col-1' data-bind="css: { shown: !hideListings() }">
-      <div class='options-box'>
-        <h3>Ann Arbor Locations</h3>
-        <hr>
-        <div id='list' data-bind="css: { hidden: hideListings }">
-          <!-- Search location -->
-          <input type="text" id="search-input" placeholder='Type to Search'
-            class='text' onkeyup='searchLocations(this.value)'>
-          <!-- Listings -->
-          <ul id='listings' data-bind="foreach: currLocations">
-            <li class='text' data-bind="text: title, click: openWindow,
+    <aside class='col-1 options-box' data-bind="css: { shown: !hideListings() }">
+      <h3>Ann Arbor Locations</h3>
+      <hr>
+      <nav id='list' data-bind="css: { hidden: hideListings }">
+        <!-- Search location -->
+        <input type="text" id="search-input" placeholder='Type to Search'
+          class='text' onkeyup='searchLocations(this.value)'>
+        <!-- Listings -->
+        <ul id='listings' data-bind="foreach: currLocations">
+          <li class='text' data-bind="text: title, click: openWindow,
 attr: { id: id }, css: { hidden: toHide, highlighted: toShine }">No Results</li>
-          </ul>
-        </div>
-      </div>
-    </div>
+        </ul>
+      </nav>
+    </aside>
 
-    <div class='col-2'>
+    <main class='col-2'>
       <img id='menu' src='img/menu-icon.png' alt='==' onclick='hideListings()'>
       <!-- Map -->
       <div id='map'></div>
-    </div>
+    </main>
 
     <!-- SCRIPTS -->
-    <script type='text/javascript' src='js/lib/knockout-3.4.2.js'></script>
+    <script src='js/lib/knockout-3.4.2.js'></script>
     <script src='js/mapscript.js'></script>
     <script src='js/locations.js'></script>
 
