@@ -60,6 +60,7 @@ function initMap() {
     // Create an onclick event to open an infowindow at each marker.
     marker.addListener('click', function() {
       populateInfoWindow(this, largeInfowindow);
+      map.setCenter(this.getPosition());
     });
   }
 
@@ -198,11 +199,18 @@ function searchLocations(str) {
     // infowindow doesn't automatically hide in `setVisible()`.
     if (locations[i].title.toLowerCase().includes(input)) {
       item.toHide(false);
-      marker.setMap(map);
+      marker.setVisible(true);
       temp_array.push(marker);
     } else {
       item.toHide(true);
-      marker.setMap(null);
+      marker.setVisible(false);
+
+      // Hide infowindow if marker is not shown
+      if (largeInfowindow.marker == marker) {
+        console.log("close infowindow");
+        largeInfowindow.close();
+        console.log(largeInfowindow);
+      }
     }
   }
 
